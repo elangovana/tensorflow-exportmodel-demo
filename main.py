@@ -19,9 +19,9 @@ def export_model_ckpt(sess, outputdir=None):
 
 
 def export_model_for_serving(outputdir, estimator):
-    export_path_base = outputdir
+    export_path_base =os.path.join( outputdir, "linear_model")
     model_version = "1.0"
-    export_path = os.path.join(outputdir, model_version)
+    export_path = os.path.join(export_path_base, model_version)
     logging.info('Exporting trained model to {}'.format(export_path))
 
     builder = tf.saved_model.builder.SavedModelBuilder(export_path)
