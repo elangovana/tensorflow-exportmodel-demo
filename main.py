@@ -73,7 +73,7 @@ def run_linear_regression(gpus: list, outputdir=None):
 
 
 def input_fn():
-    return tf.data.Dataset.from_tensors(({"features": [1.]}, [1.])).repeat(10000).batch(10)
+    return tf.data.Dataset.from_tensors(({"features": [1.]}, [1.])).repeat(10000).batch(100)
 
 
 def run(gpus: list):
