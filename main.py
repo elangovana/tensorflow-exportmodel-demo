@@ -14,7 +14,8 @@ def export_model_ckpt(sess, outputdir=None):
     logging.info("Model saved to in ckpt format {}".format(save_path))
 
 
-def run_linear_regression(gpus: list):
+def run_linear_regression(gpus: list, outputdir=None):
+    outputdir = outputdir or os.path.join(os.path.dirname(__file__), ".")
     devices =  ['/device:GPU:{}'.format(g) for g in gpus]
     strategy = tf.contrib.distribute.MirroredStrategy(devices)
     config = tf.estimator.RunConfig(
@@ -23,7 +24,8 @@ def run_linear_regression(gpus: list):
         feature_columns=[tf.feature_column.numeric_column('feats')],
         optimizer='SGD',
         config=config)
-    regressor.train(input_fn=input_fn, steps=10)
+    regressor.train(input_fn=input_fn, steps=100)
+    regressor.export_savedmodel(outputdir, input_fn)
 
 def input_fn():
   return tf.data.Dataset.from_tensors(({"feats":[1.]}, [1.])).repeat(10000).batch(10)
