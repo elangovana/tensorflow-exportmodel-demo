@@ -67,6 +67,8 @@ def run_linear_regression(gpus: list, outputdir=None):
 
     print(results)
 
+    export_model_for_serving(outputdir, regressor)
+
 
 
 def input_fn():
