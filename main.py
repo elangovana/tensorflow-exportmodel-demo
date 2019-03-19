@@ -5,7 +5,7 @@ import tensorflow as tf
 import logging
 
 
-def export_model(sess, outputdir=None):
+def export_model_ckpt(sess, outputdir=None):
     outputdir = outputdir or os.path.join(os.path.dirname(__file__), ".")
 
     saver = tf.train.Saver()
@@ -33,6 +33,8 @@ def run(gpus: list):
     sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
     # Runs the op.
     print(sess.run(sum))
+    export_model_ckpt(sess)
+
 
 
 if __name__ == '__main__':
