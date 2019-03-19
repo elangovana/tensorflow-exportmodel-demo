@@ -24,7 +24,7 @@ def run_linear_regression(gpus: list, outputdir=None):
     regressor = tf.estimator.LinearRegressor(
         feature_columns=[tf.feature_column.numeric_column('features')],
         optimizer='SGD',
-        model_dir=outputdir,
+        model_dir=checkpoint_dir,
         config=config)
     regressor.train(input_fn=input_fn, steps=10 )
     #regressor.export_savedmodel(outputdir, input_fn())
