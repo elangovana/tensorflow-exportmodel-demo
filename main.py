@@ -16,6 +16,7 @@ def export_model_ckpt(sess, outputdir=None):
 
 def run_linear_regression(gpus: list, outputdir=None):
     outputdir = outputdir or os.path.join(os.path.dirname(__file__), ".")
+    checkpoint_dir = os.path.join(outputdir, "checkpoint")
     devices =  ['/device:GPU:{}'.format(g) for g in gpus]
     strategy = tf.contrib.distribute.MirroredStrategy(devices)
     config = tf.estimator.RunConfig(
