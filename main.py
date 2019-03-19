@@ -14,6 +14,8 @@ from tensorflow.python.framework import ops
 from tensorflow.python.platform import gfile
 from tensorflow.python.summary import summary
 
+INPUT_TENSOR_NAME = "features"
+
 
 def export_model_ckpt(sess, outputdir=None):
     outputdir = outputdir or os.path.join(os.path.dirname(__file__), ".")
@@ -116,12 +118,12 @@ def run_linear_regression(gpus: list, outputdir=None):
 
 
 def serving_input_fn():
-    feature_spec = {"input": tf.FixedLenFeature(dtype=tf.float32, shape=[1])}
+    feature_spec = {INPUT_TENSOR_NAME: tf.FixedLenFeature(dtype=tf.float32, shape=[1])}
     return tf.estimator.export.build_parsing_serving_input_receiver_fn(feature_spec)()
 
 
 def input_fn():
-    return tf.data.Dataset.from_tensors(({"features": [1.]}, [1.])).repeat(10000).batch(100)
+    return tf.data.Dataset.from_tensors(({INPUT_TENSOR_NAME: [1.]}, [1.])).repeat(10000).batch(100)
 
 
 def run(gpus: list):
