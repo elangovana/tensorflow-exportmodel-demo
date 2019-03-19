@@ -25,7 +25,7 @@ def run_linear_regression(gpus: list, outputdir=None):
         optimizer='SGD',
         model_dir=outputdir,
         config=config)
-    regressor.train(input_fn=input_fn, steps=50 )
+    regressor.train(input_fn=input_fn, steps=10 )
     #regressor.export_savedmodel(outputdir, input_fn())
 
 def input_fn():
