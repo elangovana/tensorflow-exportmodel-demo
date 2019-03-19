@@ -29,7 +29,7 @@ def export_model_for_serving(outputdir, estimator):
     # TODO: build correct spec
     tensor_info_input = meta_graph_pb2.TensorInfo()
     tensor_info_input.name = "Input"
-    tensor_info_input.dtype = "float32"
+    tensor_info_input.dtype = tf.float16
     tensor_info_output = meta_graph_pb2.TensorInfo()
     tensor_info_output.name = "Output"
 
