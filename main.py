@@ -24,7 +24,7 @@ def run_linear_regression(gpus: list, outputdir=None):
         feature_columns=[tf.feature_column.numeric_column('feats')],
         optimizer='SGD',
         config=config)
-    regressor.train(input_fn=input_fn, steps=100)
+    regressor.train(input_fn=input_fn, steps=10)
     regressor.export_savedmodel(outputdir, input_fn)
 
 def input_fn():
