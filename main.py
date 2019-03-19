@@ -23,9 +23,10 @@ def run_linear_regression(gpus: list, outputdir=None):
     regressor = tf.estimator.LinearRegressor(
         feature_columns=[tf.feature_column.numeric_column('features')],
         optimizer='SGD',
+        model_dir=outputdir,
         config=config)
-    regressor.train(input_fn=input_fn, steps=10)
-    regressor.export_savedmodel(outputdir, input_fn())
+    regressor.train(input_fn=input_fn, steps=50 )
+    #regressor.export_savedmodel(outputdir, input_fn())
 
 def input_fn():
   return tf.data.Dataset.from_tensors(({"features":[1.]}, [1.])).repeat(10000).batch(10)
