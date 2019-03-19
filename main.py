@@ -13,7 +13,8 @@ from tensorflow.python.framework import importer
 from tensorflow.python.framework import ops
 from tensorflow.python.platform import gfile
 from tensorflow.python.summary import summary
-from tensorflow.python.tools.import_pb_to_tensorboard import import_to_tensorboard
+
+# from tensorflow.python.tools.import_pb_to_tensorboard import import_to_tensorboard
 
 INPUT_TENSOR_NAME = "features"
 
@@ -66,27 +67,27 @@ INPUT_TENSOR_NAME = "features"
 #     import_to_tensorboard(export_path, os.path.join(outputdir, "graph"))
 
 
-# def import_to_tensorboard(model_dir, log_dir):
-#     """View an imported protobuf model (`.pb` file) as a graph in Tensorboard.
-#
-#     Args:
-#       model_dir: The location of the protobuf (`pb`) model to visualize
-#       log_dir: The location for the Tensorboard log to begin visualization from.
-#
-#     Usage:
-#       Call this function with your model location and desired log directory.
-#       Launch Tensorboard by pointing it to the log directory.
-#       View your imported `.pb` model as a graph.
-#     """
-#
-#     with tf.Session(graph=tf.Graph()) as sess:
-#         tf.saved_model.loader.load(
-#             sess, [tf.saved_model.tag_constants.SERVING], model_dir)
-#
-#         pb_visual_writer = summary.FileWriter(log_dir)
-#         pb_visual_writer.add_graph(sess.graph)
-#         print("Model Imported. Visualize by running: "
-#               "tensorboard --logdir={}".format(log_dir))
+def import_to_tensorboard(model_dir, log_dir):
+    """View an imported protobuf model (`.pb` file) as a graph in Tensorboard.
+
+    Args:
+      model_dir: The location of the protobuf (`pb`) model to visualize
+      log_dir: The location for the Tensorboard log to begin visualization from.
+
+    Usage:
+      Call this function with your model location and desired log directory.
+      Launch Tensorboard by pointing it to the log directory.
+      View your imported `.pb` model as a graph.
+    """
+
+    with tf.Session(graph=tf.Graph()) as sess:
+        tf.saved_model.loader.load(
+            sess, [tf.saved_model.tag_constants.SERVING], model_dir)
+
+        pb_visual_writer = summary.FileWriter(log_dir)
+        pb_visual_writer.add_graph(sess.graph)
+        print("Model Imported. Visualize by running: "
+              "tensorboard --logdir={}".format(log_dir))
 
 
 def run_linear_regression(gpus: list, outputdir=None):
@@ -117,7 +118,7 @@ def run_linear_regression(gpus: list, outputdir=None):
     print(exported_model_dir)
     # Creates a session with log_device_placement set to True.
 
-    import_to_tensorboard(os.path.join(exported_model_dir.decode("utf-8") , "saved_model.pb"), os.path.join(outputdir, "graph"))
+    import_to_tensorboard(exported_model_dir.decode("utf-8"), os.path.join(outputdir, "graph"))
 
 
 def serving_input_fn():
