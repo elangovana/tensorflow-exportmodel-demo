@@ -6,7 +6,7 @@ import logging
 
 from tensorflow import Graph, Session
 from tensorflow.core.protobuf import meta_graph_pb2
-from tensorflow.python.keras.optimizers import sgd
+from tensorflow.python.keras.optimizers import  SGD
 
 
 def export_model_ckpt(sess, outputdir=None):
@@ -61,7 +61,7 @@ def run_linear_regression(gpus: list, outputdir=None):
 
     regressor = tf.estimator.LinearRegressor(
         feature_columns=[tf.feature_column.numeric_column('features')],
-        optimizer=sgd(lr=.0001),
+        optimizer=SGD(lr=.0001),
         model_dir=checkpoint_dir,
         config=config)
     regressor.train(input_fn=input_fn, steps=5)
