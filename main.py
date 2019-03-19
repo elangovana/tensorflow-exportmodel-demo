@@ -1,4 +1,17 @@
+import os
+
+import sys
 import tensorflow as tf
+import logging
+
+
+def export_model(sess, outputdir=None):
+    outputdir = outputdir or os.path.join(os.path.dirname(__file__), ".")
+
+    saver = tf.train.Saver()
+    save_path = saver.save(sess, outputdir)
+
+    logging.info("Model saved to in ckpt format {}".format(save_path))
 
 
 def run(gpus: list):
@@ -23,4 +36,9 @@ def run(gpus: list):
 
 
 if __name__ == '__main__':
-    run([0,1])
+    run([0, 1])
+    # args = parser.parse_args()
+
+    # Set up logging
+    logging.basicConfig(level=logging.INFO, handlers=[logging.StreamHandler(sys.stdout)],
+                        format='%(asctime)s %(name)s %(levelname)s %(process)d/%(threadName)s - %(message)s')
