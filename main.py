@@ -74,18 +74,17 @@ def import_to_tensorboard(model_dir, log_dir):
       Launch Tensorboard by pointing it to the log directory.
       View your imported `.pb` model as a graph.
     """
-    with session.Session(graph=ops.Graph()) as sess:
-        with gfile.FastGFile(model_dir, "rb") as f:
-            graph_def = graph_pb2.GraphDef()
-            read = f.read()
-            print(read)
-            graph_def.ParseFromString(read)
-            importer.import_graph_def(graph_def)
+
+    with tf.Session(graph=tf.Graph()) as sess:
+        tf.saved_model.loader.load(
+            sess, [tf.saved_model.tag_constants.SERVING], model_dir)
 
         pb_visual_writer = summary.FileWriter(log_dir)
         pb_visual_writer.add_graph(sess.graph)
         print("Model Imported. Visualize by running: "
               "tensorboard --logdir={}".format(log_dir))
+
+
 
 
 def run_linear_regression(gpus: list, outputdir=None):
