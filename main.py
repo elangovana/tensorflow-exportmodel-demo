@@ -61,7 +61,7 @@ def run_linear_regression(gpus: list, outputdir=None):
 
     regressor = tf.estimator.LinearRegressor(
         feature_columns=[tf.feature_column.numeric_column('features')],
-        optimizer=SGD(lr=.0001),
+        optimizer=tf.train.GradientDescentOptimizer(learning_rate=.0001),
         model_dir=checkpoint_dir,
         config=config)
     regressor.train(input_fn=input_fn, steps=5)
