@@ -117,7 +117,7 @@ def run_linear_regression(gpus: list, outputdir=None):
     print(exported_model_dir)
     # Creates a session with log_device_placement set to True.
 
-    import_to_tensorboard(os.path.join(exported_model_dir, "saved_model.pb"), os.path.join(outputdir, "graph"))
+    import_to_tensorboard(os.path.join(exported_model_dir.decode("utf-8") , "saved_model.pb"), os.path.join(outputdir, "graph"))
 
 
 def serving_input_fn():
