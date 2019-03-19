@@ -6,7 +6,13 @@ import logging
 
 from tensorflow import Graph, Session
 from tensorflow.core.protobuf import meta_graph_pb2
-from tensorflow.python.tools.import_pb_to_tensorboard import import_to_tensorboard
+#from tensorflow.python.tools.import_pb_to_tensorboard import import_to_tensorboard
+from tensorflow.core.framework import graph_pb2
+from tensorflow.python.client import session
+from tensorflow.python.framework import importer
+from tensorflow.python.framework import ops
+from tensorflow.python.platform import gfile
+from tensorflow.python.summary import summary
 
 
 def export_model_ckpt(sess, outputdir=None):
@@ -54,6 +60,32 @@ def export_model_for_serving(outputdir, estimator):
             builder.save()
     print('Done exporting!')
     import_to_tensorboard(os.path.join(export_path, "saved_model.pb"), os.path.join(outputdir, "graph"))
+
+
+def import_to_tensorboard(model_dir, log_dir):
+    """View an imported protobuf model (`.pb` file) as a graph in Tensorboard.
+
+    Args:
+      model_dir: The location of the protobuf (`pb`) model to visualize
+      log_dir: The location for the Tensorboard log to begin visualization from.
+
+    Usage:
+      Call this function with your model location and desired log directory.
+      Launch Tensorboard by pointing it to the log directory.
+      View your imported `.pb` model as a graph.
+    """
+    with session.Session(graph=ops.Graph()) as sess:
+        with gfile.FastGFile(model_dir, "rb") as f:
+            graph_def = graph_pb2.GraphDef()
+            read = f.read()
+            print(read)
+            graph_def.ParseFromString(read)
+            importer.import_graph_def(graph_def)
+
+        pb_visual_writer = summary.FileWriter(log_dir)
+        pb_visual_writer.add_graph(sess.graph)
+        print("Model Imported. Visualize by running: "
+              "tensorboard --logdir={}".format(log_dir))
 
 
 def run_linear_regression(gpus: list, outputdir=None):
