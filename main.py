@@ -5,6 +5,7 @@ import tensorflow as tf
 import logging
 
 from tensorflow import Graph, Session
+from tensorflow.core.protobuf import meta_graph_pb2
 
 
 def export_model_ckpt(sess, outputdir=None):
@@ -15,16 +16,18 @@ def export_model_ckpt(sess, outputdir=None):
 
     logging.info("Model saved to in ckpt format {}".format(save_path))
 
+
 def export_model_for_serving(outputdir, estimator):
     export_path_base = outputdir
     model_version = "1.0"
-    export_path = os.path.join(outputdir,model_version)
-    logging.info('Exporting trained model to {}'.format( export_path))
+    export_path = os.path.join(outputdir, model_version)
+    logging.info('Exporting trained model to {}'.format(export_path))
 
     builder = tf.saved_model.builder.SavedModelBuilder(export_path)
 
-    tensor_info_input = tf.saved_model.utils.build_tensor_info(input_fn())
-    tensor_info_output = estimator.predict(input_fn)
+    # TODO: build correct spec
+    tensor_info_input = meta_graph_pb2.TensorInfo()
+    tensor_info_output = meta_graph_pb2.TensorInfo()
 
     prediction_signature = (
         tf.saved_model.signature_def_utils.build_signature_def(
@@ -32,10 +35,8 @@ def export_model_for_serving(outputdir, estimator):
             outputs={'y': tensor_info_output},
             method_name=tf.saved_model.signature_constants.PREDICT_METHOD_NAME))
 
-
     with Graph().as_default():
         with Session().as_default() as sess:
-
             builder.add_meta_graph_and_variables(
                 sess, [tf.saved_model.tag_constants.SERVING],
                 signature_def_map={
@@ -47,10 +48,11 @@ def export_model_for_serving(outputdir, estimator):
             builder.save(as_text=True)
     print('Done exporting!')
 
+
 def run_linear_regression(gpus: list, outputdir=None):
     outputdir = outputdir or os.path.join(os.path.dirname(__file__), ".")
     checkpoint_dir = os.path.join(outputdir, "checkpoint")
-    devices =  ['/device:GPU:{}'.format(g) for g in gpus]
+    devices = ['/device:GPU:{}'.format(g) for g in gpus]
 
     strategy = tf.contrib.distribute.MirroredStrategy(devices)
     config = tf.estimator.RunConfig(
@@ -61,7 +63,7 @@ def run_linear_regression(gpus: list, outputdir=None):
         optimizer='SGD',
         model_dir=checkpoint_dir,
         config=config)
-    regressor.train(input_fn=input_fn, steps=10 )
+    regressor.train(input_fn=input_fn, steps=10)
 
     results = regressor.predict(input_fn)
 
@@ -70,9 +72,9 @@ def run_linear_regression(gpus: list, outputdir=None):
     export_model_for_serving(outputdir, regressor)
 
 
-
 def input_fn():
-  return tf.data.Dataset.from_tensors(({"features":[1.]}, [1.])).repeat(10000).batch(10)
+    return tf.data.Dataset.from_tensors(({"features": [1.]}, [1.])).repeat(10000).batch(10)
+
 
 def run(gpus: list):
     """
@@ -96,9 +98,8 @@ def run(gpus: list):
     export_model_ckpt(sess)
 
 
-
 if __name__ == '__main__':
-    run_linear_regression([0,1])
+    run_linear_regression([0, 1])
     # args = parser.parse_args()
 
     # Set up logging
