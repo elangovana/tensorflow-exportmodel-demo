@@ -89,6 +89,7 @@ def run_linear_regression(gpus: list, outputdir=None):
     outputdir = outputdir or os.path.join(os.path.dirname(__file__), ".")
     checkpoint_dir = os.path.join(outputdir, "checkpoint")
 
+    # TF Eager Execution
     tf.enable_eager_execution()
 
     # Runs the op.
@@ -107,10 +108,15 @@ def run_linear_regression(gpus: list, outputdir=None):
 
     results = regressor.predict(input_fn)
     print(results)
+    regressor.export_savedmodel(checkpoint_dir,
+                                tf.estimator.export.build_raw_serving_input_receiver_fn({"x": tf.placeholder(
+                                    tf.float32, shape=(1),
 
+                                    name="input"
+                                )}))
     # Creates a session with log_device_placement set to True.
 
-    export_model_for_serving(outputdir, regressor)
+    import_to_tensorboard(checkpoint_dir, os.path.join(outputdir, "graph"))
 
 
 def input_fn():
