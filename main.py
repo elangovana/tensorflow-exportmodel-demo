@@ -6,7 +6,7 @@ import logging
 
 from tensorflow import Graph, Session
 from tensorflow.core.protobuf import meta_graph_pb2
-from tensorflow.python.keras.optimizers import  SGD
+from tensorflow.python.keras.optimizers import SGD
 
 
 def export_model_ckpt(sess, outputdir=None):
@@ -19,7 +19,7 @@ def export_model_ckpt(sess, outputdir=None):
 
 
 def export_model_for_serving(outputdir, estimator):
-    export_path_base =os.path.join( outputdir, "linear_model")
+    export_path_base = os.path.join(outputdir, "linear_model")
     model_version = "1.0"
     export_path = os.path.join(export_path_base, model_version)
     logging.info('Exporting trained model to {}'.format(export_path))
@@ -28,7 +28,9 @@ def export_model_for_serving(outputdir, estimator):
 
     # TODO: build correct spec
     tensor_info_input = meta_graph_pb2.TensorInfo()
+    tensor_info_input.name = "Input"
     tensor_info_output = meta_graph_pb2.TensorInfo()
+    tensor_info_output.name = "Output"
 
     prediction_signature = (
         tf.saved_model.signature_def_utils.build_signature_def(
