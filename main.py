@@ -113,11 +113,11 @@ def run_linear_regression(gpus: list, outputdir=None):
     results = regressor.predict(input_fn)
     print(results)
 
-    exported_model = regressor.export_savedmodel(checkpoint_dir, serving_input_fn)
-    print(exported_model)
+    exported_model_dir = regressor.export_savedmodel(checkpoint_dir, serving_input_fn)
+    print(exported_model_dir)
     # Creates a session with log_device_placement set to True.
 
-    import_to_tensorboard(exported_model, os.path.join(outputdir, "graph"))
+    import_to_tensorboard(os.path.join(exported_model_dir, "saved_model.pb"), os.path.join(outputdir, "graph"))
 
 
 def serving_input_fn():
