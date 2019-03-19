@@ -57,7 +57,7 @@ def export_model_for_serving(outputdir, estimator):
 
             # export the model
             # builder.save(as_text=True)
-            builder.save()
+            builder.save(as_text=False)
     print('Done exporting!')
     import_to_tensorboard(os.path.join(export_path, "saved_model.pb"), os.path.join(outputdir, "graph"))
 
