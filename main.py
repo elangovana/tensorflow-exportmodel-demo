@@ -45,12 +45,13 @@ def export_model_for_serving(outputdir, estimator):
             builder.add_meta_graph_and_variables(
                 sess, [tf.saved_model.tag_constants.SERVING],
                 signature_def_map={
-                    'predict_images':
+                    'predict_linear':
                         prediction_signature,
                 })
 
             # export the model
-            builder.save(as_text=True)
+            #builder.save(as_text=True)
+            builder.save()
     print('Done exporting!')
 
 
