@@ -29,9 +29,10 @@ def export_model_for_serving(outputdir, estimator):
     # TODO: build correct spec
     tensor_info_input = meta_graph_pb2.TensorInfo()
     tensor_info_input.name = "Input"
-    tensor_info_input.dtype = 1.
+    tensor_info_input.dtype = 1
     tensor_info_output = meta_graph_pb2.TensorInfo()
     tensor_info_output.name = "Output"
+    tensor_info_output.dtype = 1
 
     prediction_signature = (
         tf.saved_model.signature_def_utils.build_signature_def(
