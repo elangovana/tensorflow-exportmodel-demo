@@ -4,6 +4,8 @@ import sys
 import tensorflow as tf
 import logging
 
+from tensorflow import Graph, Session
+
 
 def export_model_ckpt(sess, outputdir=None):
     outputdir = outputdir or os.path.join(os.path.dirname(__file__), ".")
@@ -13,21 +15,59 @@ def export_model_ckpt(sess, outputdir=None):
 
     logging.info("Model saved to in ckpt format {}".format(save_path))
 
+def export_model_for_serving(outputdir, estimator):
+    export_path_base = outputdir
+    model_version = "1.0"
+    export_path = os.path.join(outputdir,model_version)
+    logging.info('Exporting trained model to {}'.format( export_path))
+
+    builder = tf.saved_model.builder.SavedModelBuilder(export_path)
+
+    tensor_info_input = tf.saved_model.utils.build_tensor_info(input_fn())
+    tensor_info_output = estimator.predict(input_fn)
+
+    prediction_signature = (
+        tf.saved_model.signature_def_utils.build_signature_def(
+            inputs={'x': tensor_info_input},
+            outputs={'y': tensor_info_output},
+            method_name=tf.saved_model.signature_constants.PREDICT_METHOD_NAME))
+
+
+    with Graph().as_default():
+        with Session().as_default() as sess:
+
+            builder.add_meta_graph_and_variables(
+                sess, [tf.saved_model.tag_constants.SERVING],
+                signature_def_map={
+                    'predict_images':
+                        prediction_signature,
+                })
+
+            # export the model
+            builder.save(as_text=True)
+    print('Done exporting!')
 
 def run_linear_regression(gpus: list, outputdir=None):
     outputdir = outputdir or os.path.join(os.path.dirname(__file__), ".")
     checkpoint_dir = os.path.join(outputdir, "checkpoint")
     devices =  ['/device:GPU:{}'.format(g) for g in gpus]
+
     strategy = tf.contrib.distribute.MirroredStrategy(devices)
     config = tf.estimator.RunConfig(
         train_distribute=strategy, eval_distribute=strategy)
+
     regressor = tf.estimator.LinearRegressor(
         feature_columns=[tf.feature_column.numeric_column('features')],
         optimizer='SGD',
         model_dir=checkpoint_dir,
         config=config)
     regressor.train(input_fn=input_fn, steps=10 )
-    #regressor.export_savedmodel(outputdir, input_fn())
+
+    results = regressor.predict(input_fn)
+
+    print(results)
+
+
 
 def input_fn():
   return tf.data.Dataset.from_tensors(({"features":[1.]}, [1.])).repeat(10000).batch(10)
