@@ -108,15 +108,16 @@ def run_linear_regression(gpus: list, outputdir=None):
 
     results = regressor.predict(input_fn)
     print(results)
-    regressor.export_savedmodel(checkpoint_dir,
-                                tf.estimator.export.build_raw_serving_input_receiver_fn({"x": tf.placeholder(
-                                    tf.float32, shape=(1),
 
-                                    name="input"
-                                )}))
+    regressor.export_savedmodel(checkpoint_dir, serving_input_fn)
     # Creates a session with log_device_placement set to True.
 
     import_to_tensorboard(checkpoint_dir, os.path.join(outputdir, "graph"))
+
+
+def serving_input_fn():
+    feature_spec = {"input": tf.FixedLenFeature(dtype=tf.float32, shape=[1])}
+    return tf.estimator.export.build_parsing_serving_input_receiver_fn(feature_spec)()
 
 
 def input_fn():
