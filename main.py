@@ -51,7 +51,7 @@ def run(gpus: list):
 
 
 if __name__ == '__main__':
-    run_linear_regression([0, 1])
+    run_linear_regression(",".join(["0", "1"]))
     # args = parser.parse_args()
 
     # Set up logging
