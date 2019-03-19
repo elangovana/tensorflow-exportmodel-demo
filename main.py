@@ -103,12 +103,15 @@ def run_linear_regression(gpus: list, outputdir=None):
         config=config)
     regressor.train(input_fn=input_fn, steps=5)
 
-    results = regressor.predict(input_fn)
+
 
     # Creates a session with log_device_placement set to True.
     with  tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess:
         # Runs the op.
-        print(sess.run(results))
+        print(sess.run(regressor))
+
+    results = regressor.predict(input_fn)
+
 
     export_model_for_serving(outputdir, regressor)
 
