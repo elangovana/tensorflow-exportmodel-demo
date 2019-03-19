@@ -6,7 +6,7 @@ import logging
 
 from tensorflow import Graph, Session
 from tensorflow.core.protobuf import meta_graph_pb2
-#from tensorflow.python.tools.import_pb_to_tensorboard import import_to_tensorboard
+# from tensorflow.python.tools.import_pb_to_tensorboard import import_to_tensorboard
 from tensorflow.core.framework import graph_pb2
 from tensorflow.python.client import session
 from tensorflow.python.framework import importer
@@ -85,35 +85,30 @@ def import_to_tensorboard(model_dir, log_dir):
               "tensorboard --logdir={}".format(log_dir))
 
 
-
-
 def run_linear_regression(gpus: list, outputdir=None):
     outputdir = outputdir or os.path.join(os.path.dirname(__file__), ".")
     checkpoint_dir = os.path.join(outputdir, "checkpoint")
 
+    tf.enable_eager_execution()
 
+    # Runs the op.
+    devices = ['/device:GPU:{}'.format(g) for g in gpus]
 
+    strategy = tf.contrib.distribute.MirroredStrategy(devices)
+    config = tf.estimator.RunConfig(
+        train_distribute=strategy, eval_distribute=strategy)
+
+    regressor = tf.estimator.LinearRegressor(
+        feature_columns=[tf.feature_column.numeric_column('features')],
+        optimizer=tf.train.GradientDescentOptimizer(learning_rate=.0001),
+        model_dir=checkpoint_dir,
+        config=config)
+    regressor.train(input_fn=input_fn, steps=5)
+
+    results = regressor.predict(input_fn)
+    print(results)
 
     # Creates a session with log_device_placement set to True.
-    with  tf.Session(config=tf.ConfigProto(log_device_placement=True)) as sess:
-        # Runs the op.
-        devices = ['/device:GPU:{}'.format(g) for g in gpus]
-
-        strategy = tf.contrib.distribute.MirroredStrategy(devices)
-        config = tf.estimator.RunConfig(
-            train_distribute=strategy, eval_distribute=strategy)
-
-        regressor = tf.estimator.LinearRegressor(
-            feature_columns=[tf.feature_column.numeric_column('features')],
-            optimizer=tf.train.GradientDescentOptimizer(learning_rate=.0001),
-            model_dir=checkpoint_dir,
-            config=config)
-        regressor.train(input_fn=input_fn, steps=5)
-
-        print(sess.run(regressor))
-
-        results = regressor.predict(input_fn)
-
 
     export_model_for_serving(outputdir, regressor)
 
