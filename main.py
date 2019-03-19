@@ -15,7 +15,7 @@ def export_model_ckpt(sess, outputdir=None):
 
 
 def run_linear_regression(devices):
-    strategy = tf.distribute.MirroredStrategy(devices)
+    strategy = tf.contrib.distribute.MirroredStrategy(devices)
     config = tf.estimator.RunConfig(
         train_distribute=strategy, eval_distribute=strategy)
     regressor = tf.estimator.LinearRegressor(
