@@ -4,17 +4,7 @@ import sys
 import tensorflow as tf
 import logging
 
-from tensorflow import Graph, Session
-from tensorflow.core.protobuf import meta_graph_pb2
-# from tensorflow.python.tools.import_pb_to_tensorboard import import_to_tensorboard
-from tensorflow.core.framework import graph_pb2
-from tensorflow.python.client import session
-from tensorflow.python.framework import importer
-from tensorflow.python.framework import ops
-from tensorflow.python.platform import gfile
 from tensorflow.python.summary import summary
-
-# from tensorflow.python.tools.import_pb_to_tensorboard import import_to_tensorboard
 
 INPUT_TENSOR_NAME = "features"
 
@@ -128,28 +118,6 @@ def serving_input_fn():
 
 def input_fn():
     return tf.data.Dataset.from_tensors(({INPUT_TENSOR_NAME: [1.]}, [1.])).repeat(10000).batch(100)
-
-
-# def run(gpus: list):
-#     """
-#
-#     :param gpus: a list of Gpu device numbers , e.g [0,1]
-#     """
-#     # Creates a graph.
-#     c = []
-#     for d in ['/device:GPU:{}'.format(g) for g in gpus]:
-#         with tf.device(d):
-#             a = tf.constant([1.0, 2.0, 3.0, 4.0, 5.0, 6.0], shape=[2, 3])
-#             b = tf.constant([1.0, 2.0, 3.0, 4.0, 5.0, 6.0], shape=[3, 2])
-#             c.append(tf.matmul(a, b))
-#     with tf.device('/cpu:0'):
-#         sum = tf.add_n(c)
-#
-#     # Creates a session with log_device_placement set to True.
-#     sess = tf.Session(config=tf.ConfigProto(log_device_placement=True))
-#     # Runs the op.
-#     print(sess.run(sum))
-#     export_model_ckpt(sess)
 
 
 if __name__ == '__main__':
