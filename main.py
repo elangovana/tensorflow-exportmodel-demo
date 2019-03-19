@@ -53,7 +53,7 @@ def export_model_for_serving(outputdir, estimator):
             # builder.save(as_text=True)
             builder.save()
     print('Done exporting!')
-    import_to_tensorboard(os.path.join(export_path, "saved_model.pb"), os.path.join(outputdir, "graph"))
+    import_to_tensorboard(export_path_base, os.path.join(outputdir, "graph"))
 
 
 def run_linear_regression(gpus: list, outputdir=None):
