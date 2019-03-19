@@ -75,10 +75,10 @@ def write_model_graph(model_dir, log_dir):
 
             # graph_def = tf.GraphDef()
             # graph_def.ParseFromString(sm.meta_graphs[0])
-        g_in = tf.import_graph_def(sm.meta_graphs[0].graph_def)
-    LOGDIR = log_dir
-    train_writer = tf.summary.FileWriter(LOGDIR)
-    train_writer.add_graph(sess.graph)
+            g_in = tf.import_graph_def(sm.meta_graphs[0].graph_def)
+            LOGDIR = log_dir
+            train_writer = tf.summary.FileWriter(LOGDIR)
+            train_writer.add_graph(sess.graph)
 
 
 def run_linear_regression(gpus: list, outputdir=None):
