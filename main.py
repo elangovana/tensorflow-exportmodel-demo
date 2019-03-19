@@ -52,7 +52,7 @@ def export_model_for_serving(outputdir, estimator):
             # builder.save(as_text=True)
             builder.save()
     print('Done exporting!')
-    write_model_graph(export_path, outputdir)
+    write_model_graph(export_path, os.path.join(outputdir, "graph"))
 
 def write_model_graph(model_dir, log_dir):
     import tensorflow as tf
