@@ -21,14 +21,14 @@ def run_linear_regression(gpus: list, outputdir=None):
     config = tf.estimator.RunConfig(
         train_distribute=strategy, eval_distribute=strategy)
     regressor = tf.estimator.LinearRegressor(
-        feature_columns=[tf.feature_column.numeric_column('feats')],
+        feature_columns=[tf.feature_column.numeric_column('features')],
         optimizer='SGD',
         config=config)
     regressor.train(input_fn=input_fn, steps=10)
     regressor.export_savedmodel(outputdir, input_fn)
 
 def input_fn():
-  return tf.data.Dataset.from_tensors(({"feats":[1.]}, [1.])).repeat(10000).batch(10)
+  return tf.data.Dataset.from_tensors(({"features":[1.]}, [1.])).repeat(10000).batch(10)
 
 def run(gpus: list):
     """
