@@ -14,7 +14,8 @@ def export_model_ckpt(sess, outputdir=None):
     logging.info("Model saved to in ckpt format {}".format(save_path))
 
 
-def run_linear_regression(devices):
+def run_linear_regression(gpus: list):
+    devices =  ['/device:GPU:{}'.format(g) for g in gpus]
     strategy = tf.contrib.distribute.MirroredStrategy(devices)
     config = tf.estimator.RunConfig(
         train_distribute=strategy, eval_distribute=strategy)
@@ -51,7 +52,7 @@ def run(gpus: list):
 
 
 if __name__ == '__main__':
-    run_linear_regression(["0", "1"])
+    run_linear_regression([0,1])
     # args = parser.parse_args()
 
     # Set up logging
